@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+
+  # Servicio WAHA - API de WhatsApp
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: waha-curso
+    restart: unless-stopped
+    ports:
+      - "3333:3000"  # Puerto público para WAHA
+    environment:
+      # Clave API para autenticar peticiones a WAHA (header X-Api-Key)
+      WAHA_API_KEY: "mi_clave_secreta_2024"
+
+      # Credenciales para el Dashboard web de WAHA
+      WAHA_DASHBOARD_USERNAME: "admin"
+      WAHA_DASHBOARD_PASSWORD: "password_seguro_123"
+    
+      # Credenciales para la documentación Swagger de la API
+      WHATSAPP_SWAGGER_USERNAME: "swagger"
+      WHATSAPP_SWAGGER_PASSWORD: "swagger_pass_456"
+    volumes:
+      # Persistencia de datos de las sesiones de WhatsApp (QR, login, etc.)
+      - waha_data:/app/.waha
+    networks:
+      - automation-network
+    
+  # Servicio n8n - Automatización de flujos
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"  # Puerto público para la UI de n8n
+    environment:
+      # Zona horaria del servidor
+      - TZ=America/Caracas
+
+      # Configuración de host/puerto/protocolo para URLs internas de n8n
+      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+    
+      # URL base que usará n8n para generar URLs de webhooks
+      - WEBHOOK_URL=http://${N8N_HOST:-localhost}:5678/
+    volumes:
+      # Persistencia de workflows, credenciales, etc.
+      - n8n_data:/home/node/.n8n
+    networks:
+      - automation-network
+    
+volumes:
+  waha_data:
+    driver: local
+  n8n_data:
+    driver: local
+
+networks:
+  automation-network:
+    driver: bridge
