@@ -223,7 +223,9 @@ Añade un nodo **HTTP Request** al workflow (después del Webhook y un posible n
 ## 9\. 🔒 Nodo de WAHA en N8N
 
   * **Ir a**  n8n => Settings => Community nodes e instala:
-  ```@devlikeapro/n8n-nodes-waha```
+  ```
+  @devlikeapro/n8n-nodes-waha
+  ```
 
 
 <!-- end list -->
