@@ -11,15 +11,15 @@ services:
       - "3333:3000"  # Puerto público para WAHA
     environment:
       # Clave API para autenticar peticiones a WAHA (header X-Api-Key)
-      WAHA_API_KEY: "mi_clave_secreta_2024"
+      WAHA_API_KEY: "1122334455667788"
 
       # Credenciales para el Dashboard web de WAHA
       WAHA_DASHBOARD_USERNAME: "admin"
-      WAHA_DASHBOARD_PASSWORD: "password_seguro_123"
+      WAHA_DASHBOARD_PASSWORD: "1234567"
     
       # Credenciales para la documentación Swagger de la API
       WHATSAPP_SWAGGER_USERNAME: "swagger"
-      WHATSAPP_SWAGGER_PASSWORD: "swagger_pass_456"
+      WHATSAPP_SWAGGER_PASSWORD: "1234567"
     volumes:
       # Persistencia de datos de las sesiones de WhatsApp (QR, login, etc.)
       - waha_data:/app/.waha

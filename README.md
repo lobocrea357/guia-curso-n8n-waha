@@ -68,18 +68,18 @@ services:
     container_name: waha
     restart: unless-stopped
     ports:
-      - "3000:3000"  # Puerto público para WAHA
+      - "3333:3000"  # Puerto público para WAHA el de la izq es el puerto externo y el otro es el interno
     environment:
       # Clave API para autenticar peticiones a WAHA (header X-Api-Key)
-      WAHA_API_KEY: "mi_clave_secreta_2024"
+      WAHA_API_KEY: "1122334455667788"
 
       # Credenciales para el Dashboard web de WAHA
       WAHA_DASHBOARD_USERNAME: "admin"
-      WAHA_DASHBOARD_PASSWORD: "password_seguro_123"
+      WAHA_DASHBOARD_PASSWORD: "1234567"
     
       # Credenciales para la documentación Swagger de la API
       WHATSAPP_SWAGGER_USERNAME: "swagger"
-      WHATSAPP_SWAGGER_PASSWORD: "swagger_pass_456"
+      WHATSAPP_SWAGGER_PASSWORD: "1234567"
     volumes:
       # Persistencia de datos de las sesiones de WhatsApp (QR, login, etc.)
       - waha_data:/app/.waha
@@ -160,65 +160,7 @@ Reemplaza `TU-IP` por la IP o dominio de tu servidor.
 
 -----
 
-## 7\. 🕸️ Conexión Webhook: Recibir Mensajes (WAHA → n8n)
-
-### Paso 7.1: Crear el Webhook en n8n
-
-1.  En n8n, crea un **Nuevo Workflow**.
-2.  Agrega el nodo **Webhook**.
-3.  Configura **HTTP Method**: `POST` y **Path**: `whatsapp`.
-4.  **Guarda y activa el Workflow**.
-
-### Paso 7.2: Configurar WAHA para Enviar el Webhook
-
-Desde la terminal, configura la sesión de WAHA para que envíe los mensajes entrantes al webhook interno de n8n:
-
-```bash
-curl -X POST http://TU-IP:3000/api/sessions/default/settings \
--H "X-Api-Key: mi_clave_secreta_2024" \
--H "Content-Type: application/json" \
--d '{
-"webhooks": [
-{
-"url": "http://n8n:5678/webhook/whatsapp",
-"events": ["message"]
-}
-]
-}'
-```
-
-> **Nota:** La URL interna `http://n8n:5678` es clave. Usa la `WAHA_API_KEY` correcta.
-
------
-
-## 8\. 📤 Enviar Mensajes: Responder desde n8n (n8n → WAHA)
-
-Para que n8n pueda responder a un mensaje recibido, o enviarlo de forma programada, debe hacer una llamada HTTP a la API de WAHA.
-
-### Agregar el Nodo de Respuesta en n8n
-
-Añade un nodo **HTTP Request** al workflow (después del Webhook y un posible nodo Code/Function para extraer datos):
-
-  * **Method**: `POST`
-  * **URL**: `http://waha:3000/api/sendText` (Endpoint de WAHA para enviar texto)
-  * **Headers**:
-      * `X-Api-Key`: `mi_clave_secreta_2024`
-      * `Content-Type`: `application/json`
-  * **Body (JSON)**:
-
-<!-- end list -->
-
-```json
-{
-  "session": "default",
-  "chatId": "{{ $json.from }}", 
-  "text": "¡Mensaje recibido! Te respondo automáticamente."
-}
-```
-
-> Si el mensaje es una respuesta a un webhook, la expresión `{{ $json.from }}` debería contener el número de chat del remitente original.
-
------
+### Para obtener tu direccion ip, abre la terminal, y escribe `ipconfig` al abrir, te saldrá tu ip.
 
 ## 9\. 🔒 Nodo de WAHA en N8N
 
@@ -228,4 +170,5 @@ Añade un nodo **HTTP Request** al workflow (después del Webhook y un posible n
   ```
 
 
+## Las credenciales de waha para los nodos n8n son tudireccionip:3333 y la apikey la tienen en el dockercompose
 <!-- end list -->
